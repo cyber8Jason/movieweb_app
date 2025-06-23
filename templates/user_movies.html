@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.name }}'s Movies - MoviWeb</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('users_list') }}">Users</a>
+            <a href="{{ url_for('movie_collections') }}">Movie Collections</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>{{ user.name }}'s Movies</h1>
+        <div class="header-actions" style="text-align: center; margin-bottom: 2rem;">
+            <a href="{{ url_for('add_user_movie', user_id=user.id) }}" class="button">Add Movie</a>
+        </div>
+
+        {% if movies %}
+            <div class="movies-grid">
+                {% for movie in movies %}
+                    <div class="movie-card">
+                        <div class="movie-poster">
+                            {% if movie.poster and movie.poster != 'N/A' %}
+                                <img src="{{ movie.poster }}" alt="{{ movie.name }} poster">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='images/no-poster.jpg') }}" alt="No poster available">
+                            {% endif %}
+                        </div>
+                        <div class="movie-content">
+                            <h2>{{ movie.name }}</h2>
+                            <div class="movie-details">
+                                <p><strong>Director:</strong> {{ movie.director }}</p>
+                                <p><strong>Year:</strong> {{ movie.year }}</p>
+                                <p><strong>Rating:</strong> {{ "%.1f"|format(movie.rating) }}/10</p>
+                            </div>
+                            <div class="movie-actions">
+                                <a href="{{ url_for('update_user_movie', user_id=user.id, movie_id=movie.id) }}"
+                                   class="button">Edit</a>
+                                <a href="{{ url_for('delete_user_movie', user_id=user.id, movie_id=movie.id) }}"
+                                   class="button delete"
+                                   onclick="return confirm('Do you really want to remove this movie?')">
+                                    Remove
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>No movies added yet.</p>
+                <a href="{{ url_for('add_user_movie', user_id=user.id) }}" class="button">Add your first movie</a>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>

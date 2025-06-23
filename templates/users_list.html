@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - MovieWeb App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('users_list') }}" class="active">Users</a>
+            <a href="{{ url_for('movie_collections') }}">Movie Collections</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="header-section">
+            <h1>Users</h1>
+            <a href="{{ url_for('add_user') }}" class="button">Add New User</a>
+        </div>
+
+        {% if users %}
+            <div class="users-grid">
+                {% for user in users %}
+                    <div class="user-card">
+                        <h2>{{ user.name }}</h2>
+                        <div class="user-actions">
+                            <a href="{{ url_for('user_movies', user_id=user.id) }}"
+                               class="button">View Movies</a>
+                            <a href="{{ url_for('add_user_movie', user_id=user.id) }}"
+                               class="button secondary">Add Movie</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>No users found.</p>
+                <a href="{{ url_for('add_user') }}" class="button">Add Your First User</a>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>

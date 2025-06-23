@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Collections - MovieWeb</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('users_list') }}">Users</a>
+            <a href="{{ url_for('movie_collections') }}" class="active">Movie Collections</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Movie Collections</h1>
+
+        <!-- Search form -->
+        <div class="search-section">
+            <form action="{{ url_for('movie_collections') }}" method="GET" class="search-form">
+                <input type="text" name="search" placeholder="Search for movie title..."
+                       value="{{ request.args.get('search', '') }}">
+                <button type="submit" class="button">Search</button>
+            </form>
+        </div>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        {% if message %}
+            <div class="error-message">{{ message }}</div>
+        {% endif %}
+
+        {% if movies %}
+            <div class="movies-grid">
+                {% for movie in movies %}
+                    <div class="movie-card">
+                        <div class="movie-poster">
+                            {% if movie.poster and movie.poster != 'N/A' %}
+                                <img src="{{ movie.poster }}" alt="{{ movie.name }} poster">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='images/no-poster.jpg') }}" alt="No poster available">
+                            {% endif %}
+                        </div>
+                        <div class="movie-content">
+                            <h2>{{ movie.name }}</h2>
+                            <div class="movie-details">
+                                <p><strong>Director:</strong> {{ movie.director }}</p>
+                                <p><strong>Year:</strong> {{ movie.year }}</p>
+                                <p><strong>Rating:</strong> {{ "%.1f"|format(movie.rating) }}/10</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination Navigation -->
+            <div class="pagination">
+                {% if total_pages > 1 %}
+                    {% if page > 1 %}
+                        <a href="{{ url_for('movie_collections', page=page-1, search=search_query) }}" class="button">&laquo; Previous</a>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                        <a href="{{ url_for('movie_collections', page=p, search=search_query) }}"
+                           class="button {% if p == page %}active{% endif %}">
+                            {{ p }}
+                        </a>
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                        <a href="{{ url_for('movie_collections', page=page+1, search=search_query) }}" class="button">Next &raquo;</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>
